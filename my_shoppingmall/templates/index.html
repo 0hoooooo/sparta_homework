@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+
+    <!--구글 폰트-->
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+
+    <title>쇼핑몰 페이지</title>
+    <style>
+            *{
+            font-family: 'Nanum Pen Script', cursive;
+
+            }
+            .wrap {
+                margin: auto;
+                width: 500px;
+
+            }
+            .product {
+                width: 500px;
+                height: 300px;
+                background-image: url("https://imgc.1300k.com/aaaaaib/goods/215024/97/215024972561.jpg?3");
+                background-position: center;
+                background-size: cover;
+
+            }
+            .price{
+                font-size: 20px;
+                font-weight: bold;
+            }
+            .Info{
+                width:500px;
+                marign-top :30px;
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            .order-box{
+                width: 500px;
+
+            }
+            .button{
+                width:100px;
+                margin: auto;
+                display: block;
+                border-radius: 20px;
+            }
+            #rate{
+                color: blue;
+            }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="product"></div>
+    <div class="Info">
+        <h1>bluetooth earphone <span class="price"> price:100,000 won</span></h1>
+        <p>할인 가격입니다 얼른 구매하세요!</p>
+        <div id="rate"></div>
+    </div>
+    <div class="order-box">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" >구매자</span>
+            </div>
+            <input id="order-name" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" >수량</label>
+            </div>
+            <select id="order-count" class="custom-select" >
+                <option selected>수량 선택</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" >주소</span>
+            </div>
+            <input id="order-address" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">핸드폰</span>
+            </div>
+            <input id="order-phone" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <button onclick="order()" type="button" class="btn btn-primary button">주문하기</button>
+
+    </div>
+</div>
+
+
+    <script>
+    function order() {
+        let name =$('#order-name').val();
+        let count =$('#order-count').val();
+        let address =$('#order-address').val();
+        let phone =$('#order-phone').val();
+
+         if (name === '') {
+            alert('이름을 입력해주세요.')
+         } else if (count === '수량 선택') {
+            alert('수량을 입력해주세요.')
+         } else if (address === '') {
+            alert('주소를 입력해주세요.')
+         } else if (phone === '') {
+            alert('전화번호를 입력해주세요.')
+         } else
+            alert("주문이 완료되었습니다.") //이후 로딩해야
+
+         //주문하기 API
+         $.ajax({
+            type: "POST",
+            url: "/order",
+            data: {
+                'name': name,
+                'count': count,
+                'address': address,
+                'phone': phone
+            },
+            success: function (response) {
+                if (response["result"] === "success") {
+                    window.location.reload();
+                }
+            }
+        })
+    }
+    $(document).ready(function () {
+                $('#orders-box').html("");
+                showOrders();
+
+    });
+
+    //주문 목록보기
+    function showOrders() {
+         //주문 목록보기 API
+        $.ajax({
+            type: "GET",
+            url: "/order",
+            data: {},
+            success: function (response) {
+                if (response["result"] === "success") {
+                    let orders = response['orders']
+                    for (let i = 0; i < orders.length; i++) {
+                        let order = orders[i];
+                        console.log(orders)
+
+                        let name = order['name']
+                        let count = order['count']
+                        let address = order['address']
+                        let phone = order['phone']
+
+                        let tempHtml = `<tr>
+                                            <td>${name}</td>
+                                            <td>${count}</td>
+                                            <td>${address}</td>
+                                            <td>${phone}</td>
+                                        </tr>`
+                        $('#orders-box').append(tempHtml)
+                    }
+
+                } else {
+                    alert("리뷰를 받아오지 못했습니다");
+                }
+            }
+        })
+    }
+
+</script>
+</body>
+
+</html>

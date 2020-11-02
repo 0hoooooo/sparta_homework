@@ -10,6 +10,7 @@ soup = BeautifulSoup(data.text, 'html.parser')
 trs = soup.select('#body-content > div.newest-list > div > table > tbody > tr')
 # 아래 빈 칸('')을 채워보세요
 for tr in trs:
+    # stirp은 앞뒤 공백 제거
     rank = tr.select_one('td.number').text[0:2].strip()
     title = tr.select_one('td.info>a.title.ellipsis').text.strip()
     artist = tr.select_one('td.info>a.artist.ellipsis').text
